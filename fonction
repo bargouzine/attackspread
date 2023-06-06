@@ -1,0 +1,61 @@
+import random
+
+def calculate():
+    samples = 0
+    citizenNumber = int(input("Nombre de citoyens : "))
+    zombieNumber = int(input("Nombre de zombies : "))
+    citizenDef = [0] * citizenNumber
+    citizenDeaths = [0] * citizenNumber
+    numberOfDeaths = [0] * (citizenNumber + 1)
+
+    # Remplir le tableau citizenDef
+    for i in range(citizenNumber):
+        citizenDef[i] = int(input("Défense du citoyen {} : ".format(i)))
+
+    # Ajouter les citoyens à une liste, le premier une fois, le deuxième deux fois, etc.
+    citizenList = []
+    for j in range(citizenNumber):
+        for k in range(j + 1):
+            citizenList.append(j)
+
+    # Tableau pour le nombre d'attaques par citoyen
+    attacks = [0] * citizenNumber
+
+    for i in range(100000):
+        # Initialiser les attaques
+        for j in range(citizenNumber):
+            attacks[j] = 0
+
+        for j in range(zombieNumber):
+            # Obtenir le citoyen qui subira l'attaque
+            rnd = random.randint(0, len(citizenList) - 1)
+            x = citizenList[rnd]
+            attacks[x] += 1
+
+        # Mélanger le tableau avant de l'appliquer aux citoyens
+        random.shuffle(attacks)
+
+        # Étape finale, vérifier quels citoyens sont touchés
+        deaths = 0
+        for j in range(citizenNumber):
+            if attacks[j] > citizenDef[j]:
+                citizenDeaths[j] += 1
+                deaths += 1
+
+        numberOfDeaths[deaths] += 1
+        samples += 1
+
+    # Calculer les probabilités
+    for i in range(citizenNumber):
+        prob = 100 - (citizenDeaths[i] * 100 / samples)
+        death_percentage = numberOfDeaths[i] * 100 / samples
+        print("Probabilité de survie du citoyen {}: {:.2f}%".format(i, prob))
+        print("Pourcentage de décès pour {} décès : {:.2f}%".format(i, death_percentage))
+
+    death_percentage = numberOfDeaths[citizenNumber] * 100 / samples
+    print("Pourcentage de décès pour {} décès : {:.2f}%".format(citizenNumber, death_percentage))
+
+print("Début du programme")
+calculate()
+print("Fin du programme")
+input("Appuyez sur Entrée pour quitter.") 
